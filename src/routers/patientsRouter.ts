@@ -8,6 +8,7 @@ const patientsRouter = Router();
 
 patientsRouter
   .post("/patients", validateSchemas(addPatientSchema), patientsController.addPatient)
-  .put("/patients/:id", validateSchemas(addPatientSchema), patientsController.updatePatientAndAddressDataByPatientId);
+  .put("/patients/:id", validateSchemas(addPatientSchema), patientsController.updatePatientAndAddressDataByPatientId)
+  .get("/patients/:id", patientsController.getPatientAndAddressDataById);
 
 export default patientsRouter;
