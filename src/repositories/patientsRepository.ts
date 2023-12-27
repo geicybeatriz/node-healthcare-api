@@ -29,11 +29,43 @@ async function getPatientDataById(id: number) {
   return patient;
 }
 
+async function getAllPatientsData() {
+  const patients = await prisma.patient.findMany({
+    select: {
+      nome: true,
+      cpf: true,
+      dataNascimento: true,
+      email: true,
+      address: {
+        select: {
+          cidade: true
+        }
+      }
+    }
+  })
+  return patients;
+}
+
+async function getAllPatientsByName(term: string) {
+  const patients = await prisma.patient.findMany({
+    select: { id: true, nome: true },
+    where: {
+      nome: {
+        contains: term,
+        mode: "insensitive"
+      }
+    }
+  });
+  return patients;
+}
+
 const patientsRepository = {
   addPatient,
   getPatientByName,
   updatePatientDataById,
   getPatientDataById,
+  getAllPatientsData,
+  getAllPatientsByName,
 };
 
 export default patientsRepository;

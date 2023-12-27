@@ -1,7 +1,7 @@
 import { Address, Patient } from "@prisma/client";
+import addressRepository from "../repositories/addressRepository";
 import patientsRepository from "../repositories/patientsRepository";
 import addressServices, { CreateAddressData } from "./addressServices";
-import addressRepository from "../repositories/addressRepository";
 
 export type CreatePatientData = Omit<Patient, 'id'>
 
@@ -51,12 +51,23 @@ async function getPatientAndAddressDataById(id: number) {
   return { patient, address };
 }
 
+async function getAllPatientsData(term: string) {
+  if (term) {
+    const patients = await patientsRepository.getAllPatientsByName(term);
+    return patients;
+  }
+
+  const patients = await patientsRepository.getAllPatientsData();
+  return patients;
+}
+
 const patientsServices = {
   createPatient,
   checkPatientByNameAndCpf,
   updatePatientAndAddressDataByPatientId,
   checkPatientById,
-  getPatientAndAddressDataById
+  getPatientAndAddressDataById,
+  getAllPatientsData
 };
 
 export default patientsServices;

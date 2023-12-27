@@ -20,10 +20,17 @@ async function getPatientAndAddressDataById(req: Request, res: Response) {
   res.status(200).send(response);
 }
 
+async function getAllPatientsData(req: Request, res: Response) {
+  const term = req.query.term as string;
+  const patients = await patientsServices.getAllPatientsData(term);
+  res.status(200).send(patients);
+}
+
 const patientsController = {
   addPatient,
   updatePatientAndAddressDataByPatientId,
   getPatientAndAddressDataById,
+  getAllPatientsData
 };
 
 export default patientsController;
