@@ -14,9 +14,26 @@ async function getPatientByName(name: string, cpf: string) {
   return patient
 }
 
+async function updatePatientDataById(id: number, data: CreatePatientData) {
+  const patient = await prisma.patient.update({
+    data: data,
+    where: { id }
+  });
+  return patient;
+}
+
+async function getPatientDataById(id: number) {
+  const patient = await prisma.patient.findFirst({
+    where: { id }
+  });
+  return patient;
+}
+
 const patientsRepository = {
   addPatient,
   getPatientByName,
+  updatePatientDataById,
+  getPatientDataById,
 };
 
 export default patientsRepository;

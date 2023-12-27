@@ -6,8 +6,25 @@ async function addAddressByPatientId(data: CreateAddressData) {
   return address;
 }
 
+async function updateAddressDataByPatientId(id: number, data: CreateAddressData) {
+  const address = await prisma.address.update({
+    data: data,
+    where: { patientId: id }
+  });
+  return address;
+}
+
+async function getAddressByPatientId(id: number) {
+  const address = await prisma.address.findFirst({
+    where: { patientId: id }
+  });
+  return address;
+}
+
 const addressRepository = {
   addAddressByPatientId,
+  updateAddressDataByPatientId,
+  getAddressByPatientId,
 };
 
 export default addressRepository;

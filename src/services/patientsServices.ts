@@ -1,6 +1,6 @@
 import { Patient } from "@prisma/client";
 import patientsRepository from "../repositories/patientsRepository";
-import { CreateAddressData } from "./addressServices";
+import addressServices, { CreateAddressData } from "./addressServices";
 import addressRepository from "../repositories/addressRepository";
 
 export type CreatePatientData = Omit<Patient, 'id'>
@@ -22,8 +22,27 @@ async function createPatient(data: NewPatientInfo) {
 async function checkPatientByNameAndCpf(name: string, cpf: string) {
   const patient = await patientsRepository.getPatientByName(name, cpf);
   if (patient) {
-    throw { type: "conflict", message: "O paciente já está cadastrado no sistema." }
+    throw { type: "conflict", message: "O paciente já está cadastrado no sistema!" }
   }
+  return;
+}
+
+async function checkPatientById(id: number) {
+  const patient = await patientsRepository.getPatientDataById(id);
+  if (!patient) {
+    throw { type: "not found", message: "O paciente não está cadastrado no sistema!" }
+  };
+}
+
+async function updatePatientAndAddressDataByPatientId(id: number, data: NewPatientInfo) {
+  const patient: CreatePatientData = data.patientData;
+
+  await checkPatientById(id);
+  await addressServices.checkAddressDataByPatientId(id);
+
+  await patientsRepository.updatePatientDataById(id, patient);
+  const address: CreateAddressData = { ...data.addressData, patientId: id };
+  await addressRepository.updateAddressDataByPatientId(id, address);
   return;
 }
 
@@ -31,7 +50,9 @@ async function checkPatientByNameAndCpf(name: string, cpf: string) {
 
 const patientsServices = {
   createPatient,
-  checkPatientByNameAndCpf
+  checkPatientByNameAndCpf,
+  updatePatientAndAddressDataByPatientId,
+  checkPatientById,
 
 };
 

@@ -8,7 +8,7 @@ const app = express();
 
 app.use(cors())
   .use(express.json())
-  .use("/patients", patientsRouter)
+  .use("/", patientsRouter)
   .use(errorHandlerMiddleware)
 
 export default app;
