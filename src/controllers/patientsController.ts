@@ -22,7 +22,8 @@ async function getPatientAndAddressDataById(req: Request, res: Response) {
 
 async function getAllPatientsData(req: Request, res: Response) {
   const term = req.query.term as string;
-  const patients = await patientsServices.getAllPatientsData(term);
+  const order = req.query.order as string;
+  const patients = await patientsServices.getAllPatientsData(term, order);
   res.status(200).send(patients);
 }
 

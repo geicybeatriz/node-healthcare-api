@@ -1,5 +1,4 @@
 import { Address, Patient } from "@prisma/client";
-import { CustomError } from "../interfaces/customError";
 import addressRepository from "../repositories/addressRepository";
 import patientsRepository from "../repositories/patientsRepository";
 import addressServices, { CreateAddressData } from "./addressServices";
@@ -48,10 +47,15 @@ async function getPatientAndAddressDataById(id: number) {
   return { patient, address };
 }
 
-async function getAllPatientsData(term: string) {
-  if (term) {
+async function getAllPatientsData(term: string, order: string) {
+  if (term && !order) {
     const patients = await patientsRepository.getAllPatientsByName(term);
     return patients;
+  }
+
+  if (term && order) {
+    const patientsOrderedByTerm = await patientsRepository.getPatientDataOrderedByTerm(term, order);
+    return patientsOrderedByTerm;
   }
 
   const patients = await patientsRepository.getAllPatientsData();

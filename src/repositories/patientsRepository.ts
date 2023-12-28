@@ -2,6 +2,8 @@ import { Patient } from "@prisma/client";
 import prisma from "../config/database";
 import { CreatePatientData } from "../services/patientsServices";
 
+type Order = 'asc' | 'desc';
+
 async function addPatient(data: CreatePatientData) {
   const newPatient = await prisma.patient.create({ data });
   return newPatient.id;
@@ -27,6 +29,26 @@ async function getPatientDataById(id: number) {
     where: { id }
   });
   return patient;
+}
+
+async function getPatientDataOrderedByTerm(term: string, order: string) {
+  const patients = await prisma.patient.findMany({
+    select: {
+      id: true,
+      nome: true,
+      cpf: true,
+      dataNascimento: true,
+      email: true,
+      address: {
+        select: {
+          cidade: true
+        }
+      }
+    }, orderBy: {
+      [term]: order
+    }
+  });
+  return patients;
 }
 
 async function getAllPatientsData() {
@@ -75,6 +97,7 @@ const patientsRepository = {
   getAllPatientsData,
   getAllPatientsByName,
   deletePatientsDataById,
+  getPatientDataOrderedByTerm
 };
 
 export default patientsRepository;
