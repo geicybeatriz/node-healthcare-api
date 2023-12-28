@@ -26,11 +26,18 @@ async function getAllPatientsData(req: Request, res: Response) {
   res.status(200).send(patients);
 }
 
+async function deletePatientById(req: Request, res: Response) {
+  const { id } = req.params;
+  await patientsServices.deletePatientsDataById(parseInt(id));
+  res.status(200).send("Os dados do paciente foram removidos com sucesso!");
+}
+
 const patientsController = {
   addPatient,
   updatePatientAndAddressDataByPatientId,
   getPatientAndAddressDataById,
-  getAllPatientsData
+  getAllPatientsData,
+  deletePatientById
 };
 
 export default patientsController;

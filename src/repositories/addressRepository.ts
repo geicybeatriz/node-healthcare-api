@@ -21,10 +21,18 @@ async function getAddressByPatientId(id: number) {
   return address;
 }
 
+async function deleteAddresByPatientId(id: number) {
+  await prisma.address.delete({
+    where: { patientId: id },
+  });
+  return;
+}
+
 const addressRepository = {
   addAddressByPatientId,
   updateAddressDataByPatientId,
   getAddressByPatientId,
+  deleteAddresByPatientId
 };
 
 export default addressRepository;

@@ -23,7 +23,7 @@ async function updatePatientDataById(id: number, data: CreatePatientData) {
 }
 
 async function getPatientDataById(id: number) {
-  const patient = await prisma.patient.findFirst({
+  const patient = await prisma.patient.findUnique({
     where: { id }
   });
   return patient;
@@ -32,6 +32,7 @@ async function getPatientDataById(id: number) {
 async function getAllPatientsData() {
   const patients = await prisma.patient.findMany({
     select: {
+      id: true,
       nome: true,
       cpf: true,
       dataNascimento: true,
@@ -59,6 +60,13 @@ async function getAllPatientsByName(term: string) {
   return patients;
 }
 
+async function deletePatientsDataById(id: number) {
+  const deletePatient = await prisma.patient.delete({
+    where: { id }
+  });
+  return deletePatient;
+}
+
 const patientsRepository = {
   addPatient,
   getPatientByName,
@@ -66,6 +74,7 @@ const patientsRepository = {
   getPatientDataById,
   getAllPatientsData,
   getAllPatientsByName,
+  deletePatientsDataById,
 };
 
 export default patientsRepository;

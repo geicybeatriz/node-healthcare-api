@@ -1,4 +1,5 @@
 import { Address, Patient } from "@prisma/client";
+import { CustomError } from "../interfaces/customError";
 import addressRepository from "../repositories/addressRepository";
 import patientsRepository from "../repositories/patientsRepository";
 import addressServices, { CreateAddressData } from "./addressServices";
@@ -21,17 +22,13 @@ async function createPatient(data: NewPatientInfo) {
 
 async function checkPatientByNameAndCpf(name: string, cpf: string) {
   const patient = await patientsRepository.getPatientByName(name, cpf);
-  if (patient) {
-    throw { type: "conflict", message: "O paciente já está cadastrado no sistema!" }
-  }
+  if (patient) throw { type: "conflict", message: "O paciente já está cadastrado no sistema!" };
   return;
 }
 
 async function checkPatientById(id: number) {
   const patient = await patientsRepository.getPatientDataById(id);
-  if (!patient) {
-    throw { type: "not found", message: "O paciente não está cadastrado no sistema!" }
-  };
+  if (!patient) throw { type: "not found", message: "O paciente não está cadastrado no sistema!" };
   return patient;
 }
 
@@ -61,13 +58,22 @@ async function getAllPatientsData(term: string) {
   return patients;
 }
 
+async function deletePatientsDataById(id: number) {
+  await checkPatientById(id);
+  await addressServices.checkAddressDataByPatientId(id);
+  await addressRepository.deleteAddresByPatientId(id);
+  await patientsRepository.deletePatientsDataById(id);
+  return;
+}
+
 const patientsServices = {
   createPatient,
   checkPatientByNameAndCpf,
   updatePatientAndAddressDataByPatientId,
   checkPatientById,
   getPatientAndAddressDataById,
-  getAllPatientsData
+  getAllPatientsData,
+  deletePatientsDataById
 };
 
 export default patientsServices;
